@@ -1,0 +1,394 @@
+---
+title: "Analyser les projets TypeScript avec Moose"
+description: | 
+  Ce tutoriel vous expliquera une démarche pour importer dans Moose un modèle d'un projet TypeScript et d'en faire une analyse.
+lang: fr-FR
+author: 
+  - "Christopher Fuhrman"
+  - "![Logo ETS](assets/logo_ets.svg){width=10%}"
+date: last-modified
+date-format: "DD MMMM YYYY à HH:mm:ss Z"
+
+filters: 
+  - filters/diagram-generator.lua
+  - filters/fr-nbsp.lua
+  - filters/inline-svg.lua
+  - filters/pandoc-quotes.lua
+  - quarto
+
+format:
+  html:
+    self-contained: true
+    syntax-definitions: 
+      - syntax-highlighters/smalltalk.xml
+
+---
+
+# Introduction
+
+Ceci est un tutoriel pour comment analyser des projets TypeScript avec Moose dans le cadre du cours MGL843 à l'ÉTS.
+Il est inspiré du tutoriel [Analyzing Java with Moose 8](https://fuhrmanator.github.io/2019/07/29/AnalyzingJavaWithMoose.html).
+
+## Rappel des principes
+
+```{.plantuml caption="Principes importants pour ce tutoriel"}
+@startdot
+digraph a {
+  bgcolor="transparent"
+  node[group=a, fontname="Arial", fontsize=14];
+  subgraph pipeline {
+    rank="same";
+    node[style=filled];
+    input [fillcolor=lightblue shape=folder label="Code source\nTypeScript (*.ts)\nà analyser"];
+    ts2famix [fillcolor=yellow shape=box label="ts2famix"];
+    model [fillcolor=orange shape=box label="modèle\n(json)"];
+    moose [fillcolor=aquamarine shape=box label="Moose\n(Pharo)"];
+    analyse [shape=note label="Analyse\nempirique" fontsize=10]
+    input -> ts2famix -> model -> moose -> analyse;
+  }
+  edge[style="dashed"];
+  node[fillcolor=lightgreen style="rounded,filled" shape="box"]
+  mm [label = "Métamodèle\nFamixTypeScript"]
+  mm -> moose [style=""]
+  edge[color="gray"]
+  mm -> { ts2famix model } [arrowhead = none] ;
+}
+@enddot
+```
+
+Les principes importants dans ce tutoriel sont illustrés sur la figure ci-dessus.
+On va les voir à des étapes différentes dans le tutoriel.
+Le but est de vous amener à travers ces étapes qui représentent un processus de base pour faire une analyse empirique dans le cadre du cours.
+
+<!-- ```{.plantuml caption="Étapes du tutoriel."}
+@startuml
+start
+:Cloner un projet TypeScript à analyser;
+:Installer l'importateur ts2famix;
+:Générer un modèle Famix du projet avec l'importateur;
+@enduml
+``` -->
+
+## Obtenir code source d'un projet TypeScript à analyser
+
+```{.plantuml}
+@startdot
+digraph a {
+  bgcolor="transparent"
+  node[group=a, fontname="Arial", fontsize=14];
+  node[style=filled];
+  input [fillcolor=lightblue shape=folder label="Code source\nTypeScript (*.ts)\nà analyser"];
+}
+@enddot
+```
+
+- Trouver un projet en TypeScript à analyser, par exemple <https://github.com/Chuzzy/Emojiopoly>.
+- Cloner avec Git pour que le code soit sur sa machine locale à, par exemple, `GitHub/Emojiopoly`.
+
+## Obtenir une copie de l'importateur `ts2famix`
+
+```{.plantuml}
+@startdot
+digraph a {
+  bgcolor="transparent"
+  node[group=a, fontname="Arial", fontsize=14];
+  node[style=filled];
+  ts2famix [fillcolor=yellow shape=box label="ts2famix"];
+}
+@enddot
+```
+
+- Pour utiliser `ts2famix`, il faut d'abord obtenir son code source. Cloner le [projet ts2famix](https://github.com/Arezoo-Nasr/FamixTypeScriptImporter)
+- `ts2famix` est un projet node.js. Installer [node et npm](https://nodejs.org/)
+- ⚠ Utiliser un environnement de commande Git Bash (même sur Windows).
+  - ⚠ VS Code sur Windows démarre un terminal avec **Powershell**. Pour ce tutoriel, il faut avoir un terminal **Git Bash**. [Voir comment spécifier un autre *terminal shell* dans VS Code](https://code.visualstudio.com/docs/terminal/basics#_terminal-shells). 
+  - Les commandes bash sont similaires à des commandes dans Linux: `ls`, `cd`, etc. 
+  - Les chemins du système de fichiers sont comme dans Linux. Ça veut dire qu'il ne faut pas utiliser la barre oblique inverse (`\`, séparateur dans Windows) dans les chemins. C'est toujours une barre oblique `/` dans l'environnement bash.
+- Suivre [**les directives d'installation** dans le Readme](https://github.com/Arezoo-Nasr/FamixTypeScriptImporter#installation) de l'importateur.
+
+## Générer un modèle du projet
+
+```{.plantuml}
+@startdot
+digraph a {
+  bgcolor="transparent"
+  subgraph {
+  rank=same;
+  rankdir=LTR;
+  node[group=a, fontname="Arial", fontsize=14];
+  node[style=filled];
+  input [fillcolor=lightblue shape=folder label="Code source\nTypeScript (*.ts)\nà analyser"];
+  ts2famix [fillcolor=yellow shape=box label="ts2famix"];
+  model [fillcolor=orange shape=box label="modèle\n(json)"];
+  input -> ts2famix -> model;
+  }
+}
+@enddot
+```
+
+- Garder la même fenêtre bash utilisée plus haut pour installer l'outil `ts2famix`.
+- Valider le fonctionnement de `ts2famix` avec l'exemple de code dans le projet de l'importateur (`resources/`):
+  ```{.bash code-line-numbers="false"}
+  ts-node src/ts2famix-cli.ts -i "resources/**/*.ts" -o project-model.json
+  ```
+  Cela devrait créer un fichier `project-model.json`.
+- Si vous avez cloné le projet à analyser dans la même arborescence que l'importateur, p. ex. `GitHub/Emojiopoly` et `GitHub/FamixTypeScriptImporter`, tapez:
+  ```{.bash code-line-numbers="false"}
+  ts-node src/ts2famix-cli.ts -i "../Emojiopoly/**/*.ts" -o emojiopoly-model.json
+  ```
+
+## Configurer l'image Moose (survol)
+
+```{.plantuml}
+@startdot
+digraph a {
+  bgcolor="transparent"
+  node[group=a, fontname="Arial", fontsize=14];
+  node[style=filled];
+  moose [fillcolor=aquamarine shape=box label="Moose\n(Pharo)"];
+}
+@enddot
+```
+
+Il y a plusieurs étapes à faire pour pouvoir importer un modèle dans Moose.
+Une fois que vous avez réalisé cette étape, vous pouvez réutiliser l'image pour les analyses.
+
+1. Créer une image Moose avec Pharo Launcher. Pour la version de `ts2famix` actuel, il faut utiliser le *template* **Moose Suite 10 (development)**.
+2. Charger le métamodèle `FamixTypeScript` dans Moose.
+
+## Créer une image Moose Suite 10 dans Pharo
+
+- Installer [Pharo Launcher](https://pharo.org/web/download) et le lancer.
+- Ajouter une image à partir du *template* **Moose Suite 10 (development)**.
+  <!-- - Télécharger et dézipper [Moose 8.0.2 image](https://github.com/moosetechnology/Moose/releases/download/v8.0.2/Moose8-stable.zip) (il y a 4 fichiers, y compris `Moose8-stable.image`)
+  - Importer l'image dans Pharo Launcher
+    - Import (bouton) > Import the image directory (...)
+    - Choisir le fichier `Moose8-stable.image` dans le dossier dézippé.
+    - Vérifier l'existence de l'image **Moose8-stable** dans Pharo Launcher
+    - Renommer l'image (clique droite) à **Moose8.0.2-FamixTypeScript** -->
+
+## Charger le métamodèle FamixTypeScript dans Moose
+
+```{.plantuml}
+@startdot
+digraph a {
+  bgcolor="transparent"
+  node[group=a, fontname="Arial", fontsize=14];
+  subgraph pipeline {
+    rank="same";
+    node[style=filled];
+/*    input [fillcolor=lightblue shape=folder label="Code source\nTypeScript (*.ts)\nà analyser"];
+    ts2famix [fillcolor=yellow shape=box label="ts2famix"];
+    model [fillcolor=orange shape=box label="modèle\n(json)"]; */
+    moose [fillcolor=aquamarine shape=box label="Moose\n(Pharo)"];
+/*    analyse [shape=note label="Analyse\nempirique" fontsize=10] */
+    moose;
+  }
+  //edge[style="dashed"];
+  node[fillcolor=lightgreen style="rounded,filled" shape="box"]
+  mm [label = "Métamodèle\nFamixTypeScript"]
+  mm -> { moose } ;
+}
+@enddot
+```
+
+Par défaut, Moose n'a pas de métamodèle pour le langage TypeScript.
+Alors, il faut charger le métamodèle FamixTypeScript dans Moose et régénérer ce métamodèle.
+
+#### Charger avec un script Baseline
+
+- Sélectionner l'image ***Moose Suite 10 (development)** (créée à l'étape précédente) dans Pharo Launcher et la démarrer (bouton **Launch**)
+- Dans Pharo, taper <kbd>CTRL</kbd>-<kbd>O</kbd> <kbd>CTRL</kbd>-<kbd>W</kbd>
+  pour ouvrir une fenêtre **Moose Playground**.
+- Dans cette fenêtre, taper (coller) le texte suivant:
+  ```st
+  Metacello new 
+      githubUser: 'Arezoo-Nasr' project: 'FamixTypeScript' commitish: 'master' path: 'src';
+      baseline: 'FamixTypeScript';
+      load
+  ```
+- Taper <kbd>CTRL</kbd>-<kbd>SHIFT</kbd>-<kbd>G</kbd> (*Do it all and go*) pour exécuter la commande. Le métamodèle devrait être chargé à la fin.
+- Menu **Library** > **Famix** > **Manage metamodels** > **Regenerate all metamodels**
+
+### Charger le modèle du projet TypeScript dans Moose
+
+```{.plantuml}
+@startdot
+digraph a {
+  bgcolor="transparent"
+  node[group=a, fontname="Arial", fontsize=14];
+  subgraph pipeline {
+    rank=same;
+    rankdir=LTR;
+    node[style=filled];
+/*    input [fillcolor=lightblue shape=folder label="Code source\nTypeScript (*.ts)\nà analyser"];
+    ts2famix [fillcolor=yellow shape=box label="ts2famix"]; */
+    model [fillcolor=orange shape=box label="modèle\n(json)"];
+    moose [fillcolor=aquamarine shape=box label="Moose\n(Pharo)"];
+/*    analyse [shape=note label="Analyse\nempirique" fontsize=10] */
+    model -> moose;
+  }
+}
+@enddot
+```
+
+Maintenant que Moose connaît le métamodèle FamixTypeScript, on peut charger un modèle de programme TypeScript créé par l'outil `ts2famix`.
+
+- Déplacer le fichier `emojiopoly-model.json` généré par `ts2famix` plus tôt dans
+  le dossier de l'image Moose. C'est normalement dans
+  `Documents/Pharo/images/[nom de l'image]`
+  (ou un chemin similaire selon votre système d'exploitation et le nom de
+  l'image dans Pharo Launcher).
+
+  ::: {.callout-tip}
+  On peut localiser le dossier de l'image dans Pharo Launcher en faisant
+  un clic droit sur l'image > **Show in folder**
+  :::
+
+- Dans une fenêtre Moose Playground 
+  (<kbd>CTRL</kbd>-<kbd>O</kbd> <kbd>CTRL</kbd>-<kbd>W</kbd> pour l'ouvrir)
+  saisir le texte suivant, avec le chemin vers le fichier `.json`:
+
+  ```st
+  'emojiopoly-model.json' asFileReference readStreamDo:
+      [ :stream | model := FamixTypeScriptModel new 
+        importFromJSONStream: stream. model install ].
+  ```
+  <!-- ::: {.callout-note}
+  La dernière ligne est importante, car un modèle Moose contient des liens
+  (relatifs) vers les fichiers sources du projet importé
+  (les fichiers sources ne sont pas dans le modèle).
+  Pour visualiser le code source dans Moose, il faut indiquer où est la racine
+  des fichiers sources.
+  ::: -->
+
+- Menu **Moose > Models browser** pour vérifier que le modèle est chargé dans Moose.
+  Le nom **emojiopoly-model** (ou le nom du fichier .json) devrait être dans la liste de **Models** de la fenêtre.
+
+## Faire une analyse
+
+Cette étape n'est pas une vraie analyse empirique, car il n'y a pas de questions de recherche ou de validation d'hypothèses, etc.
+Mais on peut voir comment accéder aux informations dans un modèle de programme en TypeScript à travers Moose.
+
+- À partir de la fenêtre **Models browser**, sélectionner **emojiopoly-model** dans la liste.
+- Cliquer le bouton **Inspect** (icône avec lunettes).
+- On voit une nouvelle fenêtre **Moose Inspector** apparaître.
+- Cliquer sur **Card** dans la liste à gauche.
+- On voit une sous-fenêtre **a FamixTypeScriptClass (Card)** à gauche.
+- Cliquer sur l'onglet **SourceText** en haut de cette sous-fenêtre pour voir le code source de la classe.
+- Cliquer sur l'onglet **Moose Properties** pour voir les propriétés Moose de cette classe.
+
+![Animation de Moose pour inspecter un modèle](assets/AnimationMooseInspectModel.gif)
+
+### Faire une requête simple
+
+Dans une fenêtre Playground, exécuter le code suivant:
+
+```st
+"Get the emojiopoly model (first in Moose panel)"
+tsModel := MooseModel root first.
+"Find all classes that have 100 or more lines of code"
+bigClasses := tsModel allModelClasses 
+	select: [ :each | 
+		each numberOfLinesOfCode >= 100 ]
+```
+
+Le résultat est normalement une seule classe, `MonopolyGame`. On peut la choisir et regarder son code source pour vérifier.
+
+Dans l'onglet **Navigation** on peut aussi voir ses méthodes, ses attributs, etc.
+
+Pour obtenir une liste de longues méthodes (ayant 20 lignes ou plus) dans le projet, exécuter ce script:
+
+```st
+"Get the emojiopoly model (first in Moose panel)"
+tsModel := MooseModel root first.
+"Find all methods that have 20 or more lines of code"
+longMethods := tsModel allMethods 
+	select: [ :each | 
+		each numberOfLinesOfCode >= 20 ]
+```
+
+Pour trouver la classe de chaque méthode, il s'agit du `parentType` dans la navigation.
+
+### Faire une visualisation des classes
+
+On peut s'inspirer d'une [visualisation en Roassal](https://learning-oreilly-com.res.banq.qc.ca/library/view/agile-visualization-with/9781484271612/html/489192_1_En_4_Chapter.xhtml#:-:text=%22The%20variable%20classes,c%20%40%20RSCanvasController.) (une bibliothèque de visualisation dans Pharo) pour visualiser les classes dans un modèle Moose:
+
+```{.smalltalk code-line-numbers="true"}
+"The variable classes contains the classes we would like to visualize"
+classes := MooseModel root first allModelClasses.
+"A canvas is a container of graphical shapes"
+c := RSCanvas new.
+"Each class is represented as a box"
+classes do: [ :aClass | c add: (RSBox new model: aClass) ].
+"The width of each class indicates the number of variables defined in the class"
+RSNormalizer width shapes: c shapes; from: 6; to: 20;
+    normalize: #numberOfAttributes.
+"Height of each class represents the number of methods"
+RSNormalizer height shapes: c shapes; normalize: #numberOfMethods.
+"A class color goes from gray to red, indicating the number of lines of code"
+RSNormalizer color shapes: c shapes;
+    from: Color gray; to: Color red; normalize: #numberOfLinesOfCode.
+"Vertical lines indicate the inheritance relationship"
+RSLineBuilder orthoVertical
+    canvas: c; withVerticalAttachPoint; color: Color lightGray;
+    connectFrom: #superclass.
+"Use a tree layout to adequately locate the classes"
+RSTreeLayout on: c nodes.
+"We make all the classes draggable and with a contextual popup window"
+c nodes @ RSDraggable @ RSPopup.
+"The whole visualization is zoomable, draggable, and shapes may be searched in it"
+c @ RSCanvasController.
+```
+
+Cette visualisation montre des classes comme des rectangles.
+Un rectangle ici a effectivement trois dimensions:
+
+- Le nombre de lignes de code est représenté par la _couleur_ de chaque rectangle. Le gris signifie un nombre relativement faible de lignes de code, tandis que le rouge indique un nombre relativement élevé de lignes de code. La variation en couleur vient de la classe `RSNormalizer`.
+- Le nombre de méthodes est représenté par la _hauteur_ de chaque rectangle.
+- Le nombre d'attributs est représenté par la _largeur_ de chaque rectangle.
+
+::: {.callout-tip}
+La visualisation obtient les données de chaque élément Moose à travers les propriétés, par exemple `#numberOfAttributes`, `#numberOfMethods` et `#numberOfLinesOfCode`.
+Au fait, ce sont des méthodes (accesseurs) des éléments Famix, par exemple `FamixTypeScriptClass` qui fournissent les valeurs.
+On peut trouver d'autres propriétés dans l'onglet **Moose Properties** de ces éléments.
+:::
+
+![Visualisation du modèle Moose du projet Emojiopoly](assets/VisualisationMooseRoassal.gif)
+
+Avec le projet **emojiopoly**, on voit bien que la classe `MonopolyGame` a beaucoup de méthodes (sa hauteur) et aussi beaucoup de lignes de code (sa couleur rouge).
+
+::: {.callout-tip}
+La syntaxe avec le dièse utilisée à la ligne 9, `normalize: #numberOfAttributes`, est un "sucre syntaxique" pour une expression bloc plus longue: `normalize: [:element | element numberOfAttributes ]`.
+Parfois on veut faire un calcul sur la valeur utilisée dans la visualization, par exemple combiner avec un autre attribut comme le nombre de `receivingInvocations`.
+Dans ce cas, on fait `normalize: [:element | element numberOfAttributes + element receivingInvocations size ]`.
+:::
+
+La disposition (`RSTreeLayout`) permet de voir aussi la hiérarchie des classes en ce qui concerne l'héritage.
+Cependant, le projet **emojiopoly** n'utilise pas d'héritage en TypeScript.
+Alors, on ne voit aucune arborescence dans la visualisation. 
+
+# Conclusion 
+
+Vous avez réalisé des étapes d'une analyse de programmes en TypeScript avec l'outil Moose dans Pharo, grâce à l'utilisation d'un métamodèle Famix et un importateur (`ts2famix`).
+
+Il est important de comprendre que le métamodèle *influence* aussi d'autres éléments dans le processus, notamment l'importateur et le fichier `.json` qu'il génère (le modèle).
+
+```{.plantuml}
+@startdot
+digraph a {
+  bgcolor="transparent"
+  rank=same
+  rankdir=LTR
+  node[group=a, fontname="Arial", fontsize=14];
+  node[style=filled];
+  ts2famix [fillcolor=yellow shape=box label="ts2famix"];
+  model [fillcolor=orange shape=box label="modèle\n(json)"];
+  node[fillcolor=lightgreen style="rounded,filled" shape="box"]
+  mm [label = "Métamodèle\nFamixTypeScript"]
+  mm -> { ts2famix model } [arrowhead=none color=gray style=dashed] ;
+  }
+@enddot
+```
+
+L'importateur `ts2famix` dépend du métamodèle FamixTypeScript, car il transforme un programme TypeScript en modèle Famix, selon la structure du métamodèle.
