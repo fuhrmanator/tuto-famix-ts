@@ -1,0 +1,73 @@
+---
+format: 
+  revealjs:
+    highlightTheme: zenburn
+    self-contained: true
+    # syntax-definitions: 
+    #   - syntax-highlighters/smalltalk.xml
+filters: 
+  - filters/diagram-generator.lua
+  - filters/fr-nbsp.lua
+  - filters/inline-svg.lua
+  - filters/pandoc-quotes.lua
+  - quarto
+title: Modeling TypeScript with Moose and Pharo
+author:
+  - "![Logo ETS](assets/logo_ets.svg){width=60%}"
+  - "Christopher Fuhrman"
+email: christopher.fuhrman@etsmtl.ca
+# institute: École de technologie supérieure (Montreal, Canada)
+---
+
+# Introduction
+
+```{.plantuml caption="Importing TypeScript code in Moose"}
+@startdot
+digraph a {
+  bgcolor="transparent"
+  node[group=a, fontname="Arial", fontsize=14];
+  subgraph pipeline {
+    rank="same";
+    node[style=filled];
+    input [fillcolor=lightblue shape=folder label="TypeScript\nSource Code (*.ts)\nto analyze"];
+    ts2famix [fillcolor=yellow shape=box label="ts2famix"];
+    model [fillcolor=orange shape=box label="model\n(json)"];
+    moose [fillcolor=aquamarine shape=box label="Moose\n(Pharo)"];
+    analyse [shape=note label="Empirical\nStudy" fontsize=10]
+    input -> ts2famix -> model -> moose -> analyse;
+  }
+  edge[style="dashed"];
+  node[fillcolor=lightgreen style="rounded,filled" shape="box"]
+  mm [label = "FamixTypeScript\nMetamodel"]
+  mm -> moose [style=""]
+  edge[color="gray"]
+  mm -> { ts2famix model } [arrowhead = none] ;
+}
+@enddot
+```
+
+## About me
+
+Professor in Software Engineering at ÉTS (École de technologie supérieure) in Montreal, Canada
+
+- Research in software quality and software evolution
+- Teaching in software engineering and software architecture
+
+## About Moose
+
+- Moose is a platform for software and data analysis
+- Moose is written in Pharo
+- Moose is open-source and free
+
+# Components
+
+Bleeding edge...
+
+- <https://github.com/fuhrmanator/FamixTypeScriptImporter>
+- <https://github.com/fuhrmanator/FamixTypeScript>
+
+
+# Demo
+
+Older version (stable, limited TS elements): 
+<https://fuhrmanator.github.io/tuto-famix-ts/>
