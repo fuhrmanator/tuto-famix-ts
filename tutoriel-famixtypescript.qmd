@@ -26,8 +26,8 @@ format:
 
 # Introduction
 
-Ceci est un tutoriel pour comment analyser des projets TypeScript avec Moose dans le cadre du cours MGL843 à l'ÉTS.
-Il est inspiré du tutoriel [Analyzing Java with Moose 8](https://fuhrmanator.github.io/2019/07/29/AnalyzingJavaWithMoose.html).
+Ce tutoriel explique comment analyser des projets TypeScript avec Moose dans le cadre du cours MGL843 à l'ÉTS. 
+Il s'inspire du tutoriel [Analyzing Java with Moose 8](https://fuhrmanator.github.io/2019/07/29/AnalyzingJavaWithMoose.html).
 
 ## Rappel des principes
 
@@ -56,9 +56,9 @@ digraph a {
 @enddot
 ```
 
-Les principes importants dans ce tutoriel sont illustrés sur la figure ci-dessus.
-On va les voir à des étapes différentes dans le tutoriel.
-Le but est de vous amener à travers ces étapes qui représentent un processus de base pour faire une analyse empirique dans le cadre du cours.
+Les principes importants de ce tutoriel sont illustrés dans la figure ci-dessus.
+Nous les explorerons à différentes étapes du tutoriel. 
+Le but est de vous guider à travers ces étapes, qui représentent un processus de base pour effectuer une analyse empirique dans le cadre du cours.
 
 <!-- ```{.plantuml caption="Étapes du tutoriel."}
 @startuml
@@ -69,7 +69,7 @@ start
 @enduml
 ``` -->
 
-## Obtenir code source d'un projet TypeScript à analyser
+## Obtenir le code source d'un projet TypeScript à analyser
 
 ```{.plantuml}
 @startdot
@@ -82,8 +82,8 @@ digraph a {
 @enddot
 ```
 
-- Trouver un projet en TypeScript à analyser, par exemple <https://github.com/Chuzzy/Emojiopoly>.
-- Cloner avec Git pour que le code soit sur sa machine locale à, par exemple, `GitHub/Emojiopoly`.
+- Trouvez un projet en TypeScript à analyser, par exemple sur <https://github.com/Chuzzy/Emojiopoly>.
+- Clonez le projet avec Git pour obtenir le code sur votre machine locale, par exemple dans le répertoire `GitHub/Emojiopoly`.
 
 ## Obtenir une copie de l'importateur `ts2famix`
 
@@ -98,8 +98,10 @@ digraph a {
 @enddot
 ```
 
-- Pour utiliser `ts2famix`, il faut d'abord obtenir son code source. Cloner le [projet ts2famix](https://github.com/Arezoo-Nasr/FamixTypeScriptImporter)
-- `ts2famix` est un projet node.js. Installer [node et npm](https://nodejs.org/)
+- `ts2famix` est un projet node.js. Installez [node et npm](https://nodejs.org/).
+- `ts2famix` est une bibliothèque `npm`. Vous devez l'installer avec la commande `npm i -g ts2famix`. 
+- 
+- Cloner le [projet ts2famix](https://github.com/Arezoo-Nasr/FamixTypeScriptImporter)
 - ⚠ Utiliser un environnement de commande Git Bash (même sur Windows).
   - ⚠ VS Code sur Windows démarre un terminal avec **Powershell**. Pour ce tutoriel, il faut avoir un terminal **Git Bash**. [Voir comment spécifier un autre *terminal shell* dans VS Code](https://code.visualstudio.com/docs/terminal/basics#_terminal-shells). 
   - Les commandes bash sont similaires à des commandes dans Linux: `ls`, `cd`, etc. 
