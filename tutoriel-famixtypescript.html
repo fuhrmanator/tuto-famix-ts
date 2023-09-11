@@ -3049,7 +3049,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Date de publication</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">10 septembre 2023 à 20:34:50 +00:00</p>
+      <p class="date">11 septembre 2023 à 11:26:18 +00:00</p>
     </div>
   </div>
   
@@ -3274,7 +3274,7 @@ start
 <ul>
 <li><p>Utilisez la même fenêtre Bash que celle utilisée précédemment pour installer l’outil <strong><code>ts2famix</code></strong>.</p></li>
 <li><p>Si votre répertoire de travail actuel est le même que celui du projet, par exemple, <code>GitHub/Emojiopoly</code>, vous pouvez taper :</p>
-<div class="sourceCode" id="cb1" data-code-line-numbers="false"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ts2famix</span> <span class="at">-i</span> tsconfig.ts <span class="at">-o</span> emojiopoly-model.json</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1" data-code-line-numbers="false"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ts2famix</span> <span class="at">-i</span> tsconfig.json <span class="at">-o</span> emojiopoly-model.json</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Le fichier <code>tsconfig.ts</code> est en fait <code>GitHub/Emojiopoly/tsconfig.ts</code> (c’est dans le répertoire de travail). Ce fichier décrit le projet Emojiopoly (typiquement les projets TypeScript) ont ce genre de fichier. <code>ts2famix</code> utiliser ce fichier pour trouver le code source pour faire le modèle. Si votre projet n’a pas de <code>tsconfig.ts</code>, il est toujours possible d’importer des fichiers avec l’option <code>-i /chemin/vers/fichiers/**/*.ts</code> ce qui va trouver tous les fichiers <code>*.ts</code> dans l’arborescence spécifié avant le <code>**/</code>. Il s’agit d’un <em>glob pattern</em>pour spécifier des ensembles de fichiers à traiter.<br>
 <br>
 Le fichier <code>emojiopoly-model.json</code> est le modèle Famix (en format JSON) du projet TypeScript décortiqué par l’importateur. Dans les étapes suivantes, vous allez charger ce modèle dans Moose.</p></li>
