@@ -131,7 +131,7 @@ digraph a {
     ts2famix -i tsconfig.json -o emojiopoly-model.json
     ```
 
-    Le fichier `tsconfig.ts` est en fait `GitHub/Emojiopoly/tsconfig.ts` (c'est dans le répertoire de travail). Ce fichier décrit le projet Emojiopoly (typiquement les projets TypeScript) ont ce genre de fichier. `ts2famix` utiliser ce fichier pour trouver le code source pour faire le modèle. Si votre projet n'a pas de `tsconfig.ts`, il est toujours possible d'importer des fichiers avec l'option `-i /chemin/vers/fichiers/**/*.ts` ce qui va trouver tous les fichiers `*.ts` dans l'arborescence spécifié avant le `**/`. Il s'agit d'un *glob pattern*pour spécifier des ensembles de fichiers à traiter.\
+    Le fichier `tsconfig.json` est en fait `GitHub/Emojiopoly/tsconfig.json` (c'est dans le répertoire de travail). Ce fichier décrit le projet Emojiopoly (typiquement les projets TypeScript) ont ce genre de fichier. `ts2famix` utiliser ce fichier pour trouver le code source pour faire le modèle. Si votre projet n'a pas de `tsconfig.json`, il est toujours possible d'importer des fichiers avec l'option `-i /chemin/vers/fichiers/**/*.ts` ce qui va trouver tous les fichiers `*.ts` dans l'arborescence spécifié avant le `**/`. Il s'agit d'un *glob pattern*pour spécifier des ensembles de fichiers à traiter.\
     \
     Le fichier `emojiopoly-model.json` est le modèle Famix (en format JSON) du projet TypeScript décortiqué par l'importateur. Dans les étapes suivantes, vous allez charger ce modèle dans Moose.
 
