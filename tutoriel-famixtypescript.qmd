@@ -131,7 +131,7 @@ digraph a {
     ts2famix -i tsconfig.json -o emojiopoly-model.json
     ```
 
-    Le fichier `tsconfig.json` est en fait `GitHub/Emojiopoly/tsconfig.json` (c'est dans le répertoire de travail). Ce fichier décrit le projet Emojiopoly (typiquement les projets TypeScript) ont ce genre de fichier. `ts2famix` utiliser ce fichier pour trouver le code source pour faire le modèle. Si votre projet n'a pas de `tsconfig.json`, il est toujours possible d'importer des fichiers avec l'option `-i /chemin/vers/fichiers/**/*.ts` ce qui va trouver tous les fichiers `*.ts` dans l'arborescence spécifié avant le `**/`. Il s'agit d'un *glob pattern*pour spécifier des ensembles de fichiers à traiter.\
+    Le fichier `tsconfig.json` est en fait `GitHub/Emojiopoly/tsconfig.json` (c'est dans le répertoire de travail). Ce fichier décrit le projet Emojiopoly (typiquement les projets TypeScript) ont ce genre de fichier. `ts2famix` utiliser ce fichier pour trouver le code source pour faire le modèle. Si votre projet n'a pas de `tsconfig.json`, il est toujours possible d'importer des fichiers avec l'option `-i "/chemin/vers/fichiers/**/*.ts"` (notez bien l'utilisation de `"` autour de l'expression!) ce qui va trouver tous les fichiers `*.ts` dans l'arborescence spécifié avant le `**/`. Il s'agit d'un *glob pattern* pour spécifier des ensembles de fichiers à traiter.\
     \
     Le fichier `emojiopoly-model.json` est le modèle Famix (en format JSON) du projet TypeScript décortiqué par l'importateur. Dans les étapes suivantes, vous allez charger ce modèle dans Moose.
 
@@ -193,9 +193,7 @@ Par défaut, Moose ne possède pas de métamodèle pour le langage TypeScript. V
 #### Charger avec un script Baseline
 
 -   Sélectionnez l'image **Moose Suite 10 (development)** (créée à l'étape précédente) dans Pharo Launcher et démarrez-la (bouton **Launch**).
-
 -   Dans Pharo, tapez <kbd>CTRL</kbd>-<kbd>O</kbd> <kbd>CTRL</kbd>-<kbd>W</kbd> pour ouvrir une fenêtre **Moose Playground**.
-
 -   Dans cette fenêtre, tapez (collez) le texte suivant:
 
     ``` st
