@@ -233,6 +233,16 @@ Maintenant que Moose connaît le métamodèle FamixTypeScript, vous pouvez charg
     ![Faire glisser et déposer le fichier modèle dans Moose 10](assets/drag-drop-model-to-moose.gif)
 -   Menu **Moose \> Models browser** pour vérifier que le modèle est chargé dans Moose. Le nom **emojiopoly-model** (ou le nom du fichier .json) devrait être dans la liste de **Models** de la fenêtre.
 
+### Facultatif: automatiser le chargement d'un modèle
+
+Pour automatiser le chargement du modèle dans Moose, vous pouvez utiliser le code suivant en Pharo. 
+
+``` st
+'emojiopoly-model.json' asFileReference readStreamDo:
+      [ :stream | model := FamixTypeScriptModel new
+        importFromJSONStream: stream. model install ].
+```
+
 ## Effectuer une analyse
 
 Cette étape n'est pas une analyse empirique complète, car il n'y a pas de questions de recherche ou de validation d'hypothèses, etc. Cependant, vous pouvez apprendre comment accéder aux informations dans un modèle de programme TypeScript à travers Moose.
