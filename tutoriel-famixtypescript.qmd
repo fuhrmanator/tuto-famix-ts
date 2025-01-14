@@ -41,7 +41,7 @@ digraph a {
     ts2famix [fillcolor=yellow shape=box label="ts2famix"];
     model [fillcolor=orange shape=box label="modèle\n(json)"];
     moose [fillcolor=aquamarine shape=box label="Moose\n(Pharo)"];
-    analyse [shape=note label="Analyse\nempirique" fontsize=10]
+    analyse [shape=note label="Analyse" fontsize=10]
     input -> ts2famix -> model -> moose -> analyse;
   }
   edge[style="dashed"];
@@ -54,18 +54,10 @@ digraph a {
 @enddot
 ```
 
-Les principes importants de ce tutoriel sont illustrés dans la figure ci-dessus. Nous les explorerons à différentes étapes du tutoriel. Le but est de vous guider à travers ces étapes, qui représentent un processus de base pour effectuer une analyse empirique dans le cadre du cours.
+Les principes importants de ce tutoriel sont illustrés dans la figure ci-dessus. 
+Nous les explorerons à différentes étapes du tutoriel. 
+Le but est de vous guider à travers ces étapes, qui représentent un processus de base pour effectuer une analyse (empirique) dans le cadre du cours.
 
-````{=html}
-<!-- ```{.plantuml caption="Étapes du tutoriel."}
-@startuml
-start
-:Cloner un projet TypeScript à analyser;
-:Installer l'importateur ts2famix;
-:Générer un modèle Famix du projet avec l'importateur;
-@enduml
-``` -->
-````
 
 ## Obtenir le code source d'un projet TypeScript à analyser
 
@@ -83,7 +75,7 @@ digraph a {
 -   Trouvez un projet en TypeScript à analyser, par exemple sur <https://github.com/Chuzzy/Emojiopoly>.
 -   Clonez le projet avec Git pour obtenir le code sur votre machine locale, par exemple dans le répertoire `GitHub/Emojiopoly`.
 
-## Obtenir une copie de l'importateur `ts2famix`
+## Installer l'importateur `ts2famix`
 
 ``` plantuml
 @startdot
@@ -96,12 +88,14 @@ digraph a {
 @enddot
 ```
 
--   ⚠ Utilisez un environnement de commande Git Bash (même sur Windows).
-    -   ⚠ VS Code sur Windows démarre un terminal avec **Powershell**. Pour ce tutoriel, vous devez avoir un terminal **Git Bash**. [Consultez comment spécifier un autre *terminal shell* dans VS Code](https://code.visualstudio.com/docs/terminal/basics#_terminal-shells).
-    -   Les commandes Bash sont similaires à des commandes dans Linux: `ls`, `cd`, etc.
-    -   Les chemins du système de fichiers sont formatés comme sous Linux, ce qui signifie que vous devez utiliser la barre oblique (`/`) au lieu de la barre oblique inverse (`\`, utilisée sous Windows) dans les chemins.
--   `ts2famix` est une bibliothèque (*package*) `npm`. Installez [node et npm](https://nodejs.org/).
--   Installez `ts2famix` avec la commande `npm i -g ts2famix`.
+- `ts2famix` est un logiciel pour node.js. Installer [node et npm](https://nodejs.org/)
+- Ouvrez un terminal Git Bash dans VS Code.
+  -   ⚠ Utilisez un environnement de commande Git Bash (même sur Windows).
+  -   ⚠ VS Code sur Windows démarre un terminal avec **Powershell**. Pour ce tutoriel, vous devez avoir un terminal **Git Bash**. [Consultez comment spécifier un autre *terminal shell* dans VS Code](https://code.visualstudio.com/docs/terminal/basics#_terminal-shells).
+  -   Les commandes Bash sont similaires à des commandes dans Linux: `ls`, `cd`, etc.
+  -   Les chemins du système de fichiers sont formatés comme sous Linux, ce qui signifie que vous devez utiliser la barre oblique (`/`) au lieu de la barre oblique inverse (`\`, utilisée sous Windows) dans les chemins.
+  -   `ts2famix` est une bibliothèque (*package*) `npm`. Installez [node et npm](https://nodejs.org/).
+-   Installez l'importateur `ts2famix` avec la commande `npm install -g ts2famix` dans le terminal Git Bash.
 
 ## Générer un modèle du projet
 
@@ -131,9 +125,8 @@ digraph a {
     ts2famix -i tsconfig.json -o emojiopoly-model.json
     ```
 
-    Le fichier `tsconfig.json` est en fait `GitHub/Emojiopoly/tsconfig.json` (c'est dans le répertoire de travail). Ce fichier décrit le projet Emojiopoly (typiquement les projets TypeScript) ont ce genre de fichier. `ts2famix` utiliser ce fichier pour trouver le code source pour faire le modèle. Si votre projet n'a pas de `tsconfig.json`, il est toujours possible d'importer des fichiers avec l'option `-i "/chemin/vers/fichiers/**/*.ts"` (notez bien l'utilisation de `"` autour de l'expression!) ce qui va trouver tous les fichiers `*.ts` dans l'arborescence spécifié avant le `**/`. Il s'agit d'un *glob pattern* pour spécifier des ensembles de fichiers à traiter.\
-    \
-    Le fichier `emojiopoly-model.json` est le modèle Famix (en format JSON) du projet TypeScript décortiqué par l'importateur. Dans les étapes suivantes, vous allez charger ce modèle dans Moose.
+    Le fichier `tsconfig.json` est en fait `GitHub/Emojiopoly/tsconfig.json` (c'est dans le répertoire de travail). Ce fichier décrit le projet Emojiopoly (typiquement les projets TypeScript ont ce genre de fichier). `ts2famix` utilise ce fichier pour trouver le code source pour faire le modèle. Si votre projet n'a pas de `tsconfig.json`, il est toujours possible d'importer des fichiers avec l'option `-i "/chemin/vers/fichiers/**/*.ts"` (notez bien l'utilisation de `"` autour de l'expression !) ce qui va trouver tous les fichiers `*.ts` dans l'arborescence spécifié avant le `**/`. Il s'agit d'un *glob pattern* pour spécifier des ensembles de fichiers à traiter.
+    Le fichier `emojiopoly-model.json` est le modèle Famix (en format JSON) du projet TypeScript généré par l'importateur. Dans les étapes suivantes, vous allez charger ce modèle dans Moose.
 
 ## Configurer l'image Moose (survol)
 
@@ -150,19 +143,13 @@ digraph a {
 
 Il y a plusieurs étapes à suivre pour importer un modèle dans Moose. Une fois cette étape terminée, vous pourrez réutiliser l'image pour effectuer des analyses.
 
-1.  Créez une image Moose avec Pharo Launcher. Pour la version actuel de `ts2famix`, il faut utiliser le *template* **Moose Suite 10 (stable)**.
+1.  Créez une image Moose avec Pharo Launcher. Pour la version actuelle de `ts2famix`, il faut utiliser le *template* **Moose Suite 11 (stable)**.
 2.  Chargez le métamodèle `FamixTypeScript` dans Moose.
 
 ## Créer une image Moose Suite 10 dans Pharo
 
 -   Installez [Pharo Launcher](https://pharo.org/web/download) et lancez-le.
--   Ajoutez une image à partir du *template* **Moose Suite 10 (stable)**. <!-- - Télécharger et dézipper [Moose 8.0.2 image](https://github.com/moosetechnology/Moose/releases/download/v8.0.2/Moose8-stable.zip) (il y a 4 fichiers, y compris `Moose8-stable.image`)
-          - Importer l'image dans Pharo Launcher
-            - Import (bouton) > Import the image directory (...)
-            - Choisir le fichier `Moose8-stable.image` dans le dossier dézippé.
-            - Vérifier l'existence de l'image **Moose8-stable** dans Pharo Launcher
-            - Renommer l'image (clique droite) à **Moose8.0.2-FamixTypeScript** -->
-
+-   Ajoutez une image à partir du *template* **Moose Suite 11 (stable)**.
 ## Charger le métamodèle FamixTypeScript dans Moose
 
 ``` plantuml
@@ -177,7 +164,7 @@ digraph a {
     ts2famix [fillcolor=yellow shape=box label="ts2famix"];
     model [fillcolor=orange shape=box label="modèle\n(json)"]; */
     moose [fillcolor=aquamarine shape=box label="Moose\n(Pharo)"];
-/*    analyse [shape=note label="Analyse\nempirique" fontsize=10] */
+/*    analyse [shape=note label="Analyse" fontsize=10] */
     moose;
   }
   //edge[style="dashed"];
@@ -188,11 +175,12 @@ digraph a {
 @enddot
 ```
 
-Par défaut, Moose ne possède pas de métamodèle pour le langage TypeScript. Vous devez donc charger le métamodèle FamixTypeScript dans Moose.
+Par défaut, Moose ne possède pas de métamodèle pour le langage TypeScript. 
+Vous devez donc charger le métamodèle FamixTypeScript dans Moose.
 
 #### Charger avec un script Baseline
 
--   Sélectionnez l'image **Moose Suite 10 (development)** (créée à l'étape précédente) dans Pharo Launcher et démarrez-la (bouton **Launch**).
+-   Sélectionnez l'image **Moose Suite 11 (stable)** (créée à l'étape précédente) dans Pharo Launcher et démarrez-la (bouton **Launch**).
 -   Dans Pharo, tapez <kbd>CTRL</kbd>-<kbd>O</kbd> <kbd>CTRL</kbd>-<kbd>W</kbd> pour ouvrir une fenêtre **Moose Playground**.
 -   Dans cette fenêtre, tapez (collez) le texte suivant:
 
@@ -220,17 +208,17 @@ digraph a {
     ts2famix [fillcolor=yellow shape=box label="ts2famix"]; */
     model [fillcolor=orange shape=box label="modèle\n(json)"];
     moose [fillcolor=aquamarine shape=box label="Moose\n(Pharo)"];
-/*    analyse [shape=note label="Analyse\nempirique" fontsize=10] */
+/*    analyse [shape=note label="Analyse" fontsize=10] */
     model -> moose;
   }
 }
 @enddot
 ```
 
-Maintenant que Moose connaît le métamodèle FamixTypeScript, vous pouvez charger un modèle de programme TypeScript créé par l'outil **`ts2famix`**.
+Maintenant que Moose connaît le métamodèle FamixTypeScript, vous pouvez charger un modèle de programme TypeScript créé par l'outil `ts2famix`.
 
--   Vous pouvez faire glisser le fichier **`emojiopoly-model.json`** et le déposer dans la fenêtre où s'exécute Moose 10. Une boîte de dialogue s'ouvrira pour vous demander de confirmer que vous souhaitez importer le modèle dans Moose.\
-    ![Faire glisser et déposer le fichier modèle dans Moose 10](assets/drag-drop-model-to-moose.gif)
+-   Vous pouvez faire glisser le fichier `emojiopoly-model.json` et le déposer dans la fenêtre où s'exécute Moose 11. Une boîte de dialogue s'ouvrira pour vous demander de confirmer que vous souhaitez importer le modèle dans Moose.
+    ![Faire glisser et déposer le fichier modèle dans Moose 11](assets/drag-drop-model-to-moose.gif)
 -   Menu **Moose \> Models browser** pour vérifier que le modèle est chargé dans Moose. Le nom **emojiopoly-model** (ou le nom du fichier .json) devrait être dans la liste de **Models** de la fenêtre.
 
 ### Facultatif: automatiser le chargement d'un modèle
@@ -247,6 +235,25 @@ Pour automatiser le chargement du modèle dans Moose, vous pouvez utiliser le co
 
 Cette étape n'est pas une analyse empirique complète, car il n'y a pas de questions de recherche ou de validation d'hypothèses, etc. Cependant, vous pouvez apprendre comment accéder aux informations dans un modèle de programme TypeScript à travers Moose.
 
+```{.plantuml}
+@startdot
+digraph a {
+  bgcolor="transparent"
+  node[group=a, fontname="Arial", fontsize=14];
+  subgraph pipeline {
+    rank=same;
+    rankdir=LTR;
+    node[style=filled];
+/*    input [fillcolor=lightblue shape=folder label="Code source\nTypeScript (*.ts)\nà analyser"];
+    ts2famix [fillcolor=yellow shape=box label="ts2famix"]; */
+    model [fillcolor=orange shape=box label="modèle\n(json)"];
+    moose [fillcolor=aquamarine shape=box label="Moose\n(Pharo)"];
+    analyse [shape=note label="Analyse" fontsize=10]
+    model -> moose -> analyse;
+  }
+}
+@enddot
+```
 -   À partir de la fenêtre **Models browser**, sélectionnez **emojiopoly-model** dans la liste.
 -   Cliquez sur le bouton **Inspect** (icône avec des lunettes).
 -   Une nouvelle fenêtre **Moose Inspector** apparaîtra.
@@ -287,34 +294,45 @@ longMethods := tsModel allMethods
 
 Pour trouver la classe à laquelle chaque méthode appartient, consultez la propriété **`parentType`** dans la navigation.
 
-### Faire une visualisation des classes
+### Requêtes spécifiques à TypeScript
 
+Que faire si vous souhaitez trouver tous les `Decorators` (un élément spécifique à TypeScript) dans un projet ?
+Malheureusement, il n'existe pas (encore) de méthode `tsModel allDecorators` pour les modèles TypeScript.
+La solution consiste à utiliser `tsModel allMatching: FamixTypeScriptDecorator`.
+En effet, la méthode `allMatching:` permet de trouver tous les éléments d'une entité spécifique.
+Vous pouvez voir les noms des éléments du métamodèle TypeScript dans la [visualisation SVG du dépôt du métamodèle](https://raw.githubusercontent.com/fuhrmanator/FamixTypeScript/v1/doc/FamixTypeScript.svg).
+Les éléments sont affichés comme des classes UML en bleu clair, par exemple, `Module`, `Decorator`, etc.
+Notez que vous devez ajouter le préfixe `FamixTypeScript` au nom de l'élément, par exemple, `FamixTypeScriptModule`, `FamixTypeScriptDecorator`, etc.
+
+### Faire une visualisation des classes avec Roassal 3
+
+Roassal 3 est une bibliothèque de visualisation puissante (et complexe) dans Pharo.
 Vous pouvez vous inspirer d'une [visualisation en Roassal](https://learning-oreilly-com.res.banq.qc.ca/library/view/agile-visualization-with/9781484271612/html/489192_1_En_4_Chapter.xhtml#:-:text=%22The%20variable%20classes,c%20%40%20RSCanvasController.) (une bibliothèque de visualisation dans Pharo) pour représenter visuellement les classes dans un modèle Moose:
 
 ``` {.smalltalk code-line-numbers="true"}
-"The variable classes contains the classes we would like to visualize"
+"La variable classes contient les classes que nous souhaitons visualiser"
 classes := MooseModel root first allModelClasses.
-"A canvas is a container of graphical shapes"
+"Un canvas est un conteneur de formes graphiques"
 c := RSCanvas new.
-"Each class is represented as a box"
+"Chaque classe est représentée comme une boîte"
 classes do: [ :aClass | c add: (RSBox new model: aClass) ].
-"The width of each class indicates the number of variables defined in the class"
+"La largeur de chaque classe indique le nombre de variables définies dans la classe"
 RSNormalizer width shapes: c shapes; from: 6; to: 20;
     normalize: #numberOfAttributes.
-"Height of each class represents the number of methods"
+"La hauteur de chaque classe représente le nombre de méthodes"
 RSNormalizer height shapes: c shapes; normalize: #numberOfMethods.
-"A class color goes from gray to red, indicating the number of lines of code"
+"La couleur d'une classe passe du gris au rouge, indiquant le nombre de lignes de code"
 RSNormalizer color shapes: c shapes;
     from: Color gray; to: Color red; normalize: #numberOfLinesOfCode.
-"Vertical lines indicate the inheritance relationship"
+"Les lignes verticales indiquent la relation d'héritage"
 RSLineBuilder orthoVertical
     canvas: c; withVerticalAttachPoint; color: Color lightGray;
     connectFrom: #superclass.
-"Use a tree layout to adequately locate the classes"
+"Utiliser une disposition en arbre pour localiser adéquatement les classes"
 RSTreeLayout on: c nodes.
-"We make all the classes draggable and with a contextual popup window"
+"Nous rendons toutes les classes déplaçables et avec une fenêtre contextuelle"
 c nodes @ RSDraggable @ RSPopup.
-"The whole visualization is zoomable, draggable, and shapes may be searched in it"
+"La visualisation entière est zoomable, déplaçable, et les formes peuvent être recherchées"
 c @ RSCanvasController.
 ```
 
