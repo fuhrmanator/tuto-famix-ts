@@ -1,7 +1,7 @@
 ---
 title: "Analyser les projets TypeScript avec Moose"
 description: | 
-  Ce tutoriel vous expliquera une démarche pour importer dans Moose un modèle d'un projet TypeScript et d'en faire une analyse.
+  Ce tutoriel vous expliquera une démarche pour importer dans Moose un modèle d'un projet TypeScript et d'en faire une analyse. (actualisé pour Moose 12)
 lang: fr-FR
 author: 
   - "Christopher Fuhrman"
@@ -143,13 +143,17 @@ digraph a {
 
 Il y a plusieurs étapes à suivre pour importer un modèle dans Moose. Une fois cette étape terminée, vous pourrez réutiliser l'image pour effectuer des analyses.
 
-1.  Créez une image Moose avec Pharo Launcher. Pour la version actuelle de `ts2famix`, il faut utiliser le *template* **Moose Suite 11 (stable)**.
+1.  Créez une image Moose avec Pharo Launcher. Pour la version actuelle de `ts2famix`, il faut utiliser le *template* **Moose Suite 12 (stable)**.
 2.  Chargez le métamodèle `FamixTypeScript` dans Moose.
 
-## Créer une image Moose Suite 10 dans Pharo
+## Créer une image Moose dans Pharo
 
 -   Installez [Pharo Launcher](https://pharo.org/web/download) et lancez-le.
--   Ajoutez une image à partir du *template* **Moose Suite 11 (stable)**.
+-   Cliquez sur le bouton **New**.
+-   Sélectionnez **Official distributions** et **Moose Suite 12 (stable)**.
+-   Donnez un nom à l'image, par exemple, **Moose Suite 12 - TypeScript**.
+-   Cliquez sur **Create image** pour créer l'image. Cela peut prendre quelques minutes.
+
 ## Charger le métamodèle FamixTypeScript dans Moose
 
 ``` plantuml
@@ -180,8 +184,8 @@ Vous devez donc charger le métamodèle FamixTypeScript dans Moose.
 
 #### Charger avec un script Baseline
 
--   Sélectionnez l'image **Moose Suite 11 (stable)** (créée à l'étape précédente) dans Pharo Launcher et démarrez-la (bouton **Launch**).
--   Dans Pharo, tapez <kbd>CTRL</kbd>-<kbd>O</kbd> <kbd>CTRL</kbd>-<kbd>W</kbd> pour ouvrir une fenêtre **Moose Playground**.
+-   Sélectionnez l'image Moose (créée à l'étape précédente) dans Pharo Launcher et démarrez-la (bouton **Launch**).
+-   Dans Pharo, tapez <kbd>CTRL</kbd>-<kbd>O</kbd> <kbd>CTRL</kbd>-<kbd>W</kbd> pour ouvrir une fenêtre **Playground**.
 -   Dans cette fenêtre, tapez (collez) le texte suivant:
 
     ``` st
@@ -191,7 +195,7 @@ Vous devez donc charger le métamodèle FamixTypeScript dans Moose.
         load
     ```
 
--   Appuyez sur <kbd>CTRL</kbd>-<kbd>SHIFT</kbd>-<kbd>G</kbd> (*Do it all and go*) pour exécuter la commande. Le métamodèle devrait être chargé à la fin.
+-   Sélectionner tout le texte et appuyez sur <kbd>CTRL</kbd>-<kbd>G</kbd> (*Do it and go*) pour exécuter la commande. Le métamodèle devrait être chargé à la fin.
 
 ### Charger le modèle du projet TypeScript dans Moose
 
@@ -224,6 +228,8 @@ Maintenant que Moose connaît le métamodèle FamixTypeScript, vous pouvez charg
 ### Facultatif: automatiser le chargement d'un modèle
 
 Pour automatiser le chargement du modèle dans Moose, vous pouvez utiliser le code suivant en Pharo. 
+Ce code lit le fichier JSON (qui est dans le répertoire de travail actuel de l'image Pharo) et importe le modèle dans Moose.
+Il faut avoir déplacé le fichier JSON au bon répertoire (faites un clic droit sur l'image et sélectionnez **Show in folder** pour ouvrir le dossier dans votre système d'exploitation).
 
 ``` st
 'emojiopoly-model.json' asFileReference readStreamDo:
